@@ -1,0 +1,9 @@
+etc/
+Include/
+Lib/
+share/
+Scripts/
+pyvenv.cfg
+*.avi
+*.pt
+__pycache__
