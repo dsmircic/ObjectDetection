@@ -34,7 +34,10 @@ class ObjectDetector:
         else:
             self.path = path
 
-        self.outFile = outFile
+        if self.flags["dest"] is not None:
+            self.outFile = self.flags["dest"]
+        else:
+            self.outFile = outFile
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = self.loadModel()

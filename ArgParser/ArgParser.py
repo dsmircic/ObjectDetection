@@ -9,8 +9,8 @@ parser.add_argument("--conf", type=float,
                     help="Confidence level above which objects will be detected")
 parser.add_argument("--source", type=str,
                     help="Data on which detection will be made.")
-
-# Parse arguments
+parser.add_argument("--dest", type=str,
+                    help="Name of the file where the detection result will be stored.")
 
 
 def parse():
@@ -18,6 +18,7 @@ def parse():
     classes = args.classes
     confidence = args.conf
     source = args.source
+    dest = args.dest
 
     intClasses = list()
 
@@ -29,4 +30,5 @@ def parse():
     d["classes"] = intClasses
     d["conf"] = confidence
     d["source"] = source
+    d["dest"] = dest
     return d
