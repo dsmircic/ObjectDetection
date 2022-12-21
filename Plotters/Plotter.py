@@ -43,20 +43,20 @@ class Plotter:
                 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
                 cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
-                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 42), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
+                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
 
         return frame
 
     def displayFPS(self, frame, fps:float):
         colour = (255, 255, 255)
         text = "FPS: " + str(np.round(fps, 2))
-        location = (20, 20)
+        location = (20, 44)
 
         cv2.putText(
             frame,
             text,
             location,
-            cv2.FONT_ITALIC,
+            cv2.FONT_HERSHEY_DUPLEX,
             0.9,
             colour,
             2
@@ -65,7 +65,9 @@ class Plotter:
         return frame
 
     def plot(self, frame, fps, labels, cords):
-        boxes = self.plotBoxes(frame=frame, labels=labels, cords=cords)
-        frames = self.displayFPS(boxes, fps=fps)
+        frames = self.plotBoxes(frame=frame, labels=labels, cords=cords)
+
+        if fps is not None:
+            frames = self.displayFPS(frames, fps=fps)
 
         return frames

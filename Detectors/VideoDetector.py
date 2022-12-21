@@ -22,28 +22,12 @@ class VideoDetector(IDetector):
     def waitForKeyPress(self):
         input("Press any key to stop the detection...")
 
-    def scoreFrame(self, frame):
-        """
-        Takes a single frame as input, and scores it using the yolov5 model.
-
-        Parameters
-        ----------
-        frame:
-            The frame on which detection will be made.
-        """
-
-        frame = [frame]
-        results = self.model(frame)
-
-        labels, coord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
-        return labels, coord
 
     def detect(self, source: str, outFile: str):
         keyThread = threading.Thread(target=self.waitForKeyPress)
         keyThread.start()
 
         player = self.dataSource.loadData(source)
-
         out = self.createVideoWriter(player=player, outFile=outFile)
 
         fps = 0
@@ -51,7 +35,7 @@ class VideoDetector(IDetector):
             startTime = time()
             ret, frame = player.read()
 
-            labels, cord = self.scoreFrame(frame=frame)
+            labels, cord = super().scoreFrame(frame=frame)
             plotter = Plotter(self.classes)
 
             if not ret:

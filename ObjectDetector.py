@@ -129,4 +129,8 @@ class ObjectDetector:
 if __name__ == "__main__":
     detector = ObjectDetector(
         "https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
+
+    # detector = ObjectDetector(
+    #     "London.png", "london.png")
+
     detector.detect()
