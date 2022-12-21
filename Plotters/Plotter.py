@@ -41,8 +41,8 @@ class Plotter:
                     row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
 
                 r = (int(labels[i] + 1) * 11) % 255
-                g = (int(labels[i] + 1) * 13) % 255
-                b = (int(labels[i] + 1) * 17) % 255
+                g = (int(labels[i] + 1) * 13 - 120) % 255
+                b = (int(labels[i] + 1) * 17 - 25) % 255
 
                 background = (r, g, b)
 
