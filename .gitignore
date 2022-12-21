@@ -10,3 +10,4 @@ __pycache__
 detections/
 .vscode
 *.png
+classes.txt

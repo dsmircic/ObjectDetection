@@ -2,6 +2,7 @@ from DataLoaders.IDataLoader import IDataLoader
 import pafy
 import cv2
 
+
 class YTLoader(IDataLoader):
 
     def loadData(self, path: str):

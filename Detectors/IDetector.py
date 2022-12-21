@@ -1,6 +1,7 @@
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
+
 class IDetector:
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         self.dataSource = dataSource

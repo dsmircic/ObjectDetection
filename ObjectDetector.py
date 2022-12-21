@@ -1,16 +1,15 @@
-import cv2
 import torch
 import numpy as np
+import os
+import json
 
 from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
 from MediaDetector.MediaDetector import getMediaType
-from Detectors.IDetector import IDetector
 from Detectors.VideoDetector import VideoDetector
 from Detectors.ImageDetector import ImageDetector
-from Plotters.Plotter import Plotter
 
 
 class ObjectDetector:
@@ -28,18 +27,28 @@ class ObjectDetector:
         outFile:
             The path to the file to which the video detection result will be saved.
         """
-        self.path = path
+        self.flags = parse()
+
+        if self.flags["source"] is not None:
+            self.path = self.flags["source"]
+        else:
+            self.path = path
+
         self.outFile = outFile
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.flags = parse()
-
         self.model = self.loadModel()
         self.classes = self.model.names
 
         self.setDataLoader()
 
-        print(f"Classes: {self.classes}")
+        if not os.path.exists("classes.txt"):
+            with open("classes.txt", 'w') as f:
+                for key, value in self.classes.items():
+                    f.write('%s: %s\n' % (key, value))
+
+        if not os.path.exists("detections"):
+            os.makedirs("detections")
 
         print(f"{self.device} is used for detection.\n")
 

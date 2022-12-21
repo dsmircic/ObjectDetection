@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 class Plotter:
     def __init__(self, classes: dict):
         self.classes = classes
@@ -33,34 +34,30 @@ class Plotter:
         for i in range(n):
             row = cords[i]
             if row[4] >= 0.2:
-                x1, y1, x2, y2 = int(row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
+                x1, y1, x2, y2 = int(
+                    row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
 
                 r = (int(labels[i] + 1) * 11) % 255
-                g = (int(labels[i] + 1) * 17) % 255
-                b = (int(labels[i] + 1) * 13) % 255
+                g = (int(labels[i] + 1) * 13) % 255
+                b = (int(labels[i] + 1) * 17) % 255
 
                 background = (r, g, b)
-                
+
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
-                cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
-                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
+                cv2.putText(frame, self.classToLabel(
+                    labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
+                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20),
+                            cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
 
         return frame
 
-    def displayFPS(self, frame, fps:float):
+    def displayFPS(self, frame, fps: float):
         colour = (255, 255, 255)
         text = "FPS: " + str(np.round(fps, 2))
         location = (20, 44)
 
-        cv2.putText(
-            frame,
-            text,
-            location,
-            cv2.FONT_HERSHEY_DUPLEX,
-            0.9,
-            colour,
-            2
-        )
+        cv2.putText(frame, text, location,
+                    cv2.FONT_HERSHEY_DUPLEX, 0.9, colour, 2)
 
         return frame
 

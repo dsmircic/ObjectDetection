@@ -8,6 +8,7 @@ from time import time
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
+
 class VideoDetector(IDetector):
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         super().__init__(dataSource, model, classes)
@@ -21,7 +22,6 @@ class VideoDetector(IDetector):
 
     def waitForKeyPress(self):
         input("Press any key to stop the detection...")
-
 
     def detect(self, source: str, outFile: str):
         keyThread = threading.Thread(target=self.waitForKeyPress)
@@ -44,7 +44,8 @@ class VideoDetector(IDetector):
             endTime = time()
             fps = 1/np.round(endTime - startTime, 3)
 
-            frame = plotter.plot(frame=frame, fps=fps, labels=labels, cords=cord)
+            frame = plotter.plot(frame=frame, fps=fps,
+                                 labels=labels, cords=cord)
 
             out.write(frame)
 
