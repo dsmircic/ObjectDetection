@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 import os
-import json
 
 from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
@@ -87,7 +86,10 @@ class ObjectDetector:
         """
         return self.dataLoader.loadData(path)
 
-    def loadModel(self):
+    def loadModel(self): 
+        """
+        Loads the yolov5 model from the ultralitycs/yolov5 github repo.
+        """
         model = torch.hub.load("ultralytics/yolov5",
                                "yolov5s", pretrained=True)
 
@@ -100,6 +102,9 @@ class ObjectDetector:
         return model
 
     def detect(self):
+        """
+        Runs the detection based on the file type (eg. link, video, image) and stores the results in the detections\\ directory.
+        """
         self.detector.detect(source=self.path, outFile=self.outFile)
 
 # TODO: fix displayDetectionVideo

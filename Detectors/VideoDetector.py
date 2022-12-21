@@ -10,6 +10,9 @@ from Plotters.Plotter import Plotter
 
 
 class VideoDetector(IDetector):
+    """
+    Detects objects on videos.
+    """
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         super().__init__(dataSource, model, classes)
 

@@ -3,6 +3,9 @@ from Plotters.Plotter import Plotter
 
 
 class IDetector:
+    """
+    Generic detector for object detection, doesn't really do anything unless it is extended and the "detect" method is overriden.
+    """
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         self.dataSource = dataSource
         self.model = model

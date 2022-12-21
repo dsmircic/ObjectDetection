@@ -6,6 +6,9 @@ from Plotters.Plotter import Plotter
 
 
 class ImageDetector(IDetector):
+    """
+    Detects objects on images.
+    """
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         super().__init__(dataSource, model, classes)
 

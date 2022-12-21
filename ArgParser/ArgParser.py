@@ -1,5 +1,8 @@
 import argparse
 
+"""
+Parses arguments from the command line.
+"""
 parser = argparse.ArgumentParser()
 
 # Add arguments

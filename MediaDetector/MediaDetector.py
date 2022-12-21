@@ -5,6 +5,14 @@ link = ["https://", "http://"]
 
 
 def getMediaType(filename: str):
+    """
+    Determines which type of media is the file specified with "filename."
+
+    Parameters
+    ----------
+    filename:
+        name of the file for which we want to determine the media type.
+    """
     mimestart = mimetypes.guess_type(filename)[0]
 
     if mimestart != None:
