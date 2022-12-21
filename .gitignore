@@ -8,3 +8,4 @@ pyvenv.cfg
 *.pt
 __pycache__
 detections/
+.vscode

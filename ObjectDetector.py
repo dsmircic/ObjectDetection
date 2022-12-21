@@ -1,15 +1,17 @@
 import cv2
 import torch
 import numpy as np
-import time
-import threading
 
-from time import time
 from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
 from MediaDetector.MediaDetector import getMediaType
+from Detectors.IDetector import IDetector
+from Detectors.VideoDetector import VideoDetector
+from Detectors.ImageDetector import ImageDetector
+from Plotters.Plotter import Plotter
+
 
 class ObjectDetector:
     """
@@ -28,15 +30,19 @@ class ObjectDetector:
         """
         self.path = path
         self.outFile = outFile
+
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.flags = parse()
+
         self.model = self.loadModel()
         self.classes = self.model.names
+
+        self.setDataLoader()
 
         print(f"Classes: {self.classes}")
 
         print(f"{self.device} is used for detection.\n")
-        
+
     def setDataLoader(self):
         """
         Checks the file type from the path variable and sets the class data loader.
@@ -46,13 +52,19 @@ class ObjectDetector:
 
         if mediaType == "link":
             self.dataLoader = YTLoader()
-        
+            self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
+                self.device), classes=self.classes)
+
         elif mediaType == "video":
             self.dataLoader = VideoLoader()
-        
+            self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
+                self.device), classes=self.classes)
+
         elif mediaType == "image":
             self.dataLoader = ImageLoader()
-        
+            self.detector = ImageDetector(dataSource=self.dataLoader, model=self.model.to(
+                self.device), classes=self.classes)
+
         else:
             print("File type not supported!")
             return -1
@@ -64,137 +76,22 @@ class ObjectDetector:
         return self.dataLoader.loadData(path)
 
     def loadModel(self):
-        model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained = True)
+        model = torch.hub.load("ultralytics/yolov5",
+                               "yolov5s", pretrained=True)
 
         if len(self.flags["classes"]) > 0:
             model.classes = self.flags["classes"]
-            
+
         if self.flags["conf"] is not None:
             model.conf = self.flags["conf"]
 
         return model
 
-    def scoreFrame(self, frame):
-        """
-        Takes a single frame as input, and scores it using the yolov5 model.
-
-        Parameters
-        ----------
-        frame:
-            The frame on which detection will be made.
-        """
-
-        self.model.to(self.device)
-        frame = [frame]
-        results = self.model(frame)
-
-        labels, coord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
-        return labels, coord
-
-    def classToLabel(self, x):
-        """
-        Returns the label name in a string format from the corresponding numeric label.
-
-        Parameters
-        ----------
-        x:
-            The numeric label.
-        """
-
-        return self.classes[int(x)]
-
-    def plotBoxes(self, frame):
-        """
-        Takes a frame and it's results as input and plots bounding boxes and labels onto the frame.
-
-        Parameters
-        ----------
-        frame:
-            Image frame on which the bounding boxes and labels will be plotted.
-        """
-
-        labels, cord = self.scoreFrame(frame)
-        n = len(labels)
-        xShape, yShape = frame.shape[1], frame.shape[0]
-
-        for i in range(n):
-            row = cord[i]
-            if row[4] >= 0.2:
-                x1, y1, x2, y2 = int(row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
-
-                r = (int(labels[i] + 1) * 11) % 255
-                g = (int(labels[i] + 1) * 17) % 255
-                b = (int(labels[i] + 1) * 13) % 255
-
-                background = (r, g, b)
-                print(background)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
-                cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
-                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 42), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
-
-        return frame
-
-    def displayFPS(self, frame, fps:float):
-        colour = (255, 255, 255)
-        text = "FPS: " + str(np.round(fps, 2))
-        location = (20, 20)
-
-        cv2.putText(
-            frame,
-            text,
-            location,
-            cv2.FONT_ITALIC,
-            0.9,
-            colour,
-            2
-        )
-
-        return frame
-
-    def createFrame(self, frame, fps):
-        boxes = self.plotBoxes(frame)
-        frames = self.displayFPS(boxes, fps=fps)
-
-        return frames
-
-    def createVideoWriter(self, player):
-        xShape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
-        yShape = int(player.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fourCC = cv2.VideoWriter_fourcc(*"MJPG")
-
-        return cv2.VideoWriter("detections\\" + self.outFile, fourCC, 20, (xShape, yShape))
-
     def detect(self):
-        keyThread = threading.Thread(target=self.waitForKeyPress)
-        keyThread.start()
+        self.detector.detect(source=self.path, outFile=self.outFile)
 
-        self.setDataLoader()
-        player = self.dataLoader.loadData(self.path)
-
-        out = self.createVideoWriter(player=player)
-
-        fps = 0
-        while keyThread.is_alive():
-            startTime = time()
-            ret, frame = player.read()
-            if not ret:
-                break
-
-            frame = self.createFrame(frame, fps)
-            endTime = time()
-            fps = 1/np.round(endTime - startTime, 3)
-
-            out.write(frame)
-        
-        out.release()
-        player.release()
-
-    def waitForKeyPress(self):
-        input("Press any key to stop the detection...")
-
-#TODO: fix displayDetectionVideo
+# TODO: fix displayDetectionVideo
     #     self.displayDetectionVideo()
-        
 
     # def displayDetectionVideo(self):
     #     sleep(2)
@@ -230,5 +127,6 @@ class ObjectDetector:
 
 
 if __name__ == "__main__":
-    detector = ObjectDetector("https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
+    detector = ObjectDetector(
+        "https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
     detector.detect()
