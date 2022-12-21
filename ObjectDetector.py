@@ -1,7 +1,10 @@
 import cv2
 import torch
-from time import time
 import numpy as np
+import keyboard
+import threading
+
+from time import time
 from DataLoaders.IDataLoader import IDataLoader
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
@@ -112,7 +115,7 @@ class ObjectDetector:
                 x1, y1, x2, y2 = int(row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
                 background = (0, 255, 0)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
-                cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, background, 2)
+                cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
 
         return frame
 
@@ -144,16 +147,19 @@ class ObjectDetector:
         yShape = int(player.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fourCC = cv2.VideoWriter_fourcc(*"MJPG")
 
-        return cv2.VideoWriter("detections/" + self.outFile, fourCC, 20, (xShape, yShape))
+        return cv2.VideoWriter("detections\\" + self.outFile, fourCC, 20, (xShape, yShape))
 
     def detect(self):
+        keyThread = threading.Thread(target=self.waitForKeyPress)
+        keyThread.start()
+
         self.setDataLoader()
         player = self.dataLoader.loadData(self.path)
 
         out = self.createVideoWriter(player=player)
 
         fps = 0
-        while True:
+        while keyThread.is_alive():
             startTime = time()
             ret, frame = player.read()
             if not ret:
@@ -164,6 +170,46 @@ class ObjectDetector:
             fps = 1/np.round(endTime - startTime, 3)
 
             out.write(frame)
+
+    def waitForKeyPress(self):
+        input("Press any key to stop the detection...")
+
+#TODO: fix displayDetectionVideo
+    #     self.displayDetectionVideo()
+        
+
+    # def displayDetectionVideo(self):
+    #     sleep(2)
+    #     print("In display")
+    #     cap = cv2.VideoCapture(self.outFile)
+    #     print(cap.isOpened())
+
+    #     if not cap.isOpened():
+    #         print(f"Error reading {self.outFile}!")
+    #         return -1
+
+    #     # Read until video is completed
+    #     while(cap.isOpened()):
+
+    #     # Capture frame-by-frame
+    #         ret, frame = cap.read()
+    #         print(ret, frame)
+    #         if ret == True:
+    #         # Display the resulting frame
+    #             cv2.imshow('Frame', frame)
+
+    #         # Press Q on keyboard to exit
+    #             if keyboard.read_key() == "q":
+    #                 break
+
+    #     # Break the loop
+    #         else:
+    #             break
+
+    #     # When everything done, release
+    #     # the video capture object
+    #     cap.release()
+
 
 if __name__ == "__main__":
     detector = ObjectDetector("https://www.youtube.com/watch?v=EXUQnLyc3yE", "video1.avi")
