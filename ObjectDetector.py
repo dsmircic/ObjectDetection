@@ -1,11 +1,11 @@
 import cv2
 import torch
 import numpy as np
-import keyboard
+import time
 import threading
 
 from time import time
-from DataLoaders.IDataLoader import IDataLoader
+from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
@@ -29,13 +29,14 @@ class ObjectDetector:
         self.path = path
         self.outFile = outFile
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.flags = parse()
         self.model = self.loadModel()
         self.classes = self.model.names
 
         print(f"Classes: {self.classes}")
 
         print(f"{self.device} is used for detection.\n")
-
+        
     def setDataLoader(self):
         """
         Checks the file type from the path variable and sets the class data loader.
@@ -64,6 +65,13 @@ class ObjectDetector:
 
     def loadModel(self):
         model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained = True)
+
+        if len(self.flags["classes"]) > 0:
+            model.classes = self.flags["classes"]
+            
+        if self.flags["conf"] is not None:
+            model.conf = self.flags["conf"]
+
         return model
 
     def scoreFrame(self, frame):
@@ -113,14 +121,21 @@ class ObjectDetector:
             row = cord[i]
             if row[4] >= 0.2:
                 x1, y1, x2, y2 = int(row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
-                background = (0, 255, 0)
+
+                r = (int(labels[i] + 1) * 11) % 255
+                g = (int(labels[i] + 1) * 17) % 255
+                b = (int(labels[i] + 1) * 13) % 255
+
+                background = (r, g, b)
+                print(background)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
                 cv2.putText(frame, self.classToLabel(labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
+                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 42), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255,255,255), 2)
 
         return frame
 
     def displayFPS(self, frame, fps:float):
-        colour = (255, 0, 0)
+        colour = (255, 255, 255)
         text = "FPS: " + str(np.round(fps, 2))
         location = (20, 20)
 
@@ -170,6 +185,9 @@ class ObjectDetector:
             fps = 1/np.round(endTime - startTime, 3)
 
             out.write(frame)
+        
+        out.release()
+        player.release()
 
     def waitForKeyPress(self):
         input("Press any key to stop the detection...")
@@ -212,5 +230,5 @@ class ObjectDetector:
 
 
 if __name__ == "__main__":
-    detector = ObjectDetector("https://www.youtube.com/watch?v=EXUQnLyc3yE", "video1.avi")
+    detector = ObjectDetector("https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
     detector.detect()
