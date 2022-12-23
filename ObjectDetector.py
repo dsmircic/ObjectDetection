@@ -44,6 +44,9 @@ class ObjectDetector:
 
         self.setDataLoader()
 
+        if not os.path.exists("detections"):
+            os.makedirs("detections")
+
         print(f"{self.device} is used for detection.\n")
 
     def setDataLoader(self):
