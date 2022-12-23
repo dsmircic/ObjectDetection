@@ -1,8 +1,10 @@
+import abc
+
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
 
-class IDetector:
+class IDetector(abc.ABC):
     """
     Generic detector for object detection, doesn't really do anything unless it is extended and the "detect" method is overriden.
     """
@@ -27,6 +29,7 @@ class IDetector:
         labels, coord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
         return labels, coord
 
+    @abc.abstractmethod
     def detect(self, source: str, outFile: str):
         """
         Runs a detection algorithm and plots the results to the screen.

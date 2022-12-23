@@ -44,14 +44,6 @@ class ObjectDetector:
 
         self.setDataLoader()
 
-        if not os.path.exists("classes.txt"):
-            with open("classes.txt", 'w') as f:
-                for key, value in self.classes.items():
-                    f.write('%s: %s\n' % (key, value))
-
-        if not os.path.exists("detections"):
-            os.makedirs("detections")
-
         print(f"{self.device} is used for detection.\n")
 
     def setDataLoader(self):

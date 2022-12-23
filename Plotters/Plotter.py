@@ -6,6 +6,7 @@ class Plotter:
     """
     Plots bounding boxes on images, prints the number of detected objects in the upper left corner and fps if the source file is a video.
     """
+
     def __init__(self, classes: dict):
         self.classes = classes
 
