@@ -35,3 +35,4 @@ class IDetector(abc.ABC):
         Runs a detection algorithm and plots the results to the screen.
         """
         pass
+

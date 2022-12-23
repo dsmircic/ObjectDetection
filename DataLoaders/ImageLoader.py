@@ -10,3 +10,4 @@ class ImageLoader(IDataLoader):
 
     def loadData(self, path: str):
         return cv2.imread(path)
+

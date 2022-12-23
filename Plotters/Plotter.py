@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+font = cv2.FONT_HERSHEY_DUPLEX
 
 class Plotter:
     """
@@ -49,9 +50,9 @@ class Plotter:
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
                 cv2.putText(frame, self.classToLabel(
-                    labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
+                    labels[i]), (x1, y1), font, 0.9, (255, 255, 255), 2)
                 cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20),
-                            cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
+                            font, 0.9, (255, 255, 255), 2)
 
         return frame
 
@@ -61,7 +62,7 @@ class Plotter:
         location = (20, 44)
 
         cv2.putText(frame, text, location,
-                    cv2.FONT_HERSHEY_DUPLEX, 0.9, colour, 2)
+                    font, 0.9, colour, 2)
 
         return frame
 

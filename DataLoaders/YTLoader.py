@@ -10,3 +10,4 @@ class YTLoader(IDataLoader):
         video = pafy.new(path).streams[-1]
         assert video is not None
         return cv2.VideoCapture(video.url)
+

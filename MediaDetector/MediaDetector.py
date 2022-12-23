@@ -29,3 +29,4 @@ def getMediaType(filename: str):
             return "link"
 
     return "none"
+

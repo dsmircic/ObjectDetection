@@ -16,6 +16,7 @@ parser.add_argument("--dest", type=str,
                     help="Name of the file where the detection result will be stored.")
 
 
+
 def parse():
     args = parser.parse_args()
     classes = args.classes

@@ -5,6 +5,8 @@ Include/
 Lib/
 share/
 Scripts/
+buffer/
+detections/
 
 .vscode
 pyvenv.cfg
@@ -12,3 +14,4 @@ pyvenv.cfg
 *.avi
 *.pt
 *.png
+*.mp4

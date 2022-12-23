@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import os
+import threading
 
 from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
@@ -47,7 +48,7 @@ class ObjectDetector:
         if not os.path.exists("detections"):
             os.makedirs("detections")
 
-        print(f"{self.device} is used for detection.\n")
+        print(f"{self.device} is being used for detection.\n")
 
     def setDataLoader(self):
         """

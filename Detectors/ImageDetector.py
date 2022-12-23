@@ -22,3 +22,4 @@ class ImageDetector(IDetector):
         cv2.imwrite("detections\\" + outFile, outFrame)
         cv2.imshow("Detection", outFrame)
         cv2.waitKey(0)
+        
