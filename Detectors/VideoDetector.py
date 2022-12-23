@@ -10,7 +10,7 @@ from time import time
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
-bufferSize = 3
+bufferSize = 7
 
 class VideoDetector(IDetector):
     """
@@ -63,4 +63,4 @@ class VideoDetector(IDetector):
         player.release()
 
     def writeFrameToBuffer(self, frame, currentFrame):
-        cv2.imwrite("buffer\\buffer.jpg", frame)
+        cv2.imwrite("buffer\\buffer" + str(int(currentFrame % bufferSize)) + ".jpg", frame)

@@ -8,8 +8,11 @@ app=Flask(__name__)
 
 def readVideo():
     while True:
+        c = 0
         frame = open(os.getcwd() + 
-                        "\\..\\buffer\\buffer.jpg", 'rb').read()
+                        "\\..\\buffer\\buffer" + (str(int(c % 7)) + ".jpg"), 'rb').read()
+
+        c += 1
 
         yield(b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
