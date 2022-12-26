@@ -17,7 +17,7 @@ class ObjectDetector:
     Uses Yolov5 object detection algorithm to detect certain objects and highlights them through OpenCV.
     """
 
-    def __init__(self, path: str, outFile: str):
+    def __init__(self):
         """
         Parameters
         ----------
@@ -32,12 +32,14 @@ class ObjectDetector:
         if self.flags["source"] is not None:
             self.path = self.flags["source"]
         else:
-            self.path = path
+            print("Provide source with '--source' flag")
+            return -1
 
         if self.flags["dest"] is not None:
             self.outFile = self.flags["dest"]
         else:
-            self.outFile = outFile
+            print("Provide destination with '--dest' flag")
+            return -1
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = self.load_model()
@@ -109,10 +111,6 @@ class ObjectDetector:
         self.detector.detect(source=self.path, outFile=self.outFile)
 
 if __name__ == "__main__":
-    detector = ObjectDetector(
-        "https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
-
-    # detector = ObjectDetector(
-    #     "London.png", "london.png")
+    detector = ObjectDetector()
 
     detector.detect()
