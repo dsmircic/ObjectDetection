@@ -20,22 +20,22 @@ class VideoDetector(IDetector):
         super().__init__(dataSource, model, classes)
         self.buffer = ['1', '2', '3']
 
-    def createVideoWriter(self, player, outFile: str):
+    def create_video_writer(self, player, outFile: str):
         xShape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
         yShape = int(player.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fourCC = cv2.VideoWriter_fourcc(*"MJPG")
 
         return cv2.VideoWriter("detections\\" + outFile, fourCC, 20, (xShape, yShape))
 
-    def waitForKeyPress(self):
+    def wait_for_key_press(self):
         input("Press any key to stop the detection...")
 
     def detect(self, source: str, outFile: str):
-        keyThread = threading.Thread(target=self.waitForKeyPress)
+        keyThread = threading.Thread(target=self.wait_for_key_press)
         keyThread.start()
 
         player = self.dataSource.loadData(source)
-        out = self.createVideoWriter(player=player, outFile=outFile)
+        out = self.create_video_writer(player=player, outFile=outFile)
 
         fps = 0
         cFrame = 0
@@ -43,7 +43,7 @@ class VideoDetector(IDetector):
             startTime = time()
             ret, frame = player.read()
 
-            labels, cord = super().scoreFrame(frame=frame)
+            labels, cord = super().score_frame(frame=frame)
             plotter = Plotter(self.classes)
 
             if not ret:

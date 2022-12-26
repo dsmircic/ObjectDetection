@@ -4,7 +4,7 @@ mimetypes.init()
 link = ["https://", "http://"]
 
 
-def getMediaType(filename: str):
+def get_media_type(filename: str):
     """
     Determines which type of media is the file specified with "filename."
 

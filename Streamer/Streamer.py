@@ -6,7 +6,7 @@ from flask import Flask, Response
 
 app=Flask(__name__)
 
-def readVideo():
+def read_video():
     while True:
         c = 0
         frame = open(os.getcwd() + 
@@ -19,7 +19,8 @@ def readVideo():
 
 @app.route('/video')
 def video():
-    return Response(readVideo(),
+    return Response(read_video
+(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__=="__main__":
