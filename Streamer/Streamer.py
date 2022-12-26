@@ -3,15 +3,16 @@ import os
 
 from time import time
 from flask import Flask, Response
+from Detectors.VideoDetector import VideoDetector
 
 app=Flask(__name__)
 
 def read_video():
     while True:
         c = 0
-        frame = open(os.getcwd() + 
-                        "\\..\\buffer\\buffer" + (str(int(c % 7)) + ".jpg"), 'rb').read()
-
+        # frame = open(os.getcwd() + "\\..\\buffer\\buffer"
+        #             + (str(int((c) % 1)) + ".jpg"), 'rb').read()
+        frame = open(os.getcwd() + "\\..\\buffer\\buffer.jpg", 'rb').read()
         c += 1
 
         yield(b'--frame\r\n'
@@ -19,8 +20,7 @@ def read_video():
 
 @app.route('/video')
 def video():
-    return Response(read_video
-(),
+    return Response(read_video(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__=="__main__":

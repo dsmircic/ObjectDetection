@@ -1,6 +1,7 @@
 import threading
 import cv2
 import numpy as np
+import os
 
 from time import time
 
@@ -10,7 +11,8 @@ from time import time
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
-bufferSize = 7
+buffer_size = 1
+
 
 class VideoDetector(IDetector):
     """
@@ -18,7 +20,6 @@ class VideoDetector(IDetector):
     """
     def __init__(self, dataSource: IDataLoader, model, classes: dict):
         super().__init__(dataSource, model, classes)
-        self.buffer = ['1', '2', '3']
 
     def create_video_writer(self, player, outFile: str):
         xShape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -40,7 +41,7 @@ class VideoDetector(IDetector):
         fps = 0
         cFrame = 0
         while keyThread.is_alive():
-            startTime = time()
+            start_time = time()
             ret, frame = player.read()
 
             labels, cord = super().score_frame(frame=frame)
@@ -49,18 +50,20 @@ class VideoDetector(IDetector):
             if not ret:
                 break
 
-            endTime = time()
-            fps = 1/np.round(endTime - startTime, 3)
+            end_time = time()
+            fps = 1/np.round(end_time - start_time, 3)
 
             frame = plotter.plot(frame=frame, fps=fps,
                                  labels=labels, cords=cord)
 
             out.write(frame)
-            self.writeFrameToBuffer(frame=frame, currentFrame=cFrame)
+            self.write_frame_to_buffer(frame=frame, current_frame=cFrame)
             cFrame += 1
 
         out.release()
         player.release()
 
-    def writeFrameToBuffer(self, frame, currentFrame):
-        cv2.imwrite("buffer\\buffer" + str(int(currentFrame % bufferSize)) + ".jpg", frame)
+    def write_frame_to_buffer(self, frame, current_frame):
+        # cv2.imwrite("buffer\\buffer" + str(int(current_frame %
+        #             buffer_size)) + ".jpg", frame)
+        cv2.imwrite("buffer\\buffer.jpg", frame)
