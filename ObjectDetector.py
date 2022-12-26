@@ -8,7 +8,10 @@ from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
+from DataLoaders.CameraLoader import CameraLoader
+
 from MediaDetector.MediaDetector import get_media_type
+
 from Detectors.VideoDetector import VideoDetector
 from Detectors.ImageDetector import ImageDetector
 
@@ -72,6 +75,11 @@ class ObjectDetector:
         elif mediaType == "image":
             self.dataLoader = ImageLoader()
             self.detector = ImageDetector(dataSource=self.dataLoader, model=self.model.to(
+                self.device), classes=self.classes)
+
+        elif mediaType == "camera":
+            self.dataLoader = CameraLoader
+            self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
                 self.device), classes=self.classes)
 
         else:
