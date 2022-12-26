@@ -2,6 +2,13 @@ import cv2
 import numpy as np
 
 font = cv2.FONT_HERSHEY_DUPLEX
+fontScale = 1
+fontThickness = 2
+size, _ = cv2.getTextSize('Test', font, fontScale=fontScale, thickness=fontThickness)
+fontWidth, fontHeight = size
+margin = 15
+topMargin = 25
+white = (255, 255, 255)
 
 class Plotter:
     """
@@ -11,7 +18,7 @@ class Plotter:
     def __init__(self, classes: dict):
         self.classes = classes
 
-    def classToLabel(self, x):
+    def class_to_label(self, x):
         """
         Returns the label name in a string format from the corresponding numeric label.
 
@@ -23,7 +30,7 @@ class Plotter:
 
         return self.classes[int(x)]
 
-    def plotBoxes(self, frame, labels, cords):
+    def plot_boxes(self, frame, labels, cords):
         """
         Takes a frame and it's results as input and plots bounding boxes and labels onto the frame.
 
@@ -35,6 +42,11 @@ class Plotter:
 
         n = len(labels)
         xShape, yShape = frame.shape[1], frame.shape[0]
+
+        if n == 0:
+            text = "Detected: " + "0"
+            cv2.putText(frame, text, (20, topMargin),
+                    fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
         for i in range(n):
             row = cords[i]
@@ -49,27 +61,30 @@ class Plotter:
                 background = (r, g, b)
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
-                cv2.putText(frame, self.classToLabel(
-                    labels[i]), (x1, y1), font, 0.9, (255, 255, 255), 2)
-                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20),
-                            font, 0.9, (255, 255, 255), 2)
+                cv2.putText(frame, self.class_to_label(
+                    labels[i]), (x1, y1), fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
+
+                detected = str(len(labels)) if len(labels) > 0 else "0" 
+
+                text = "Detected: " + detected
+                cv2.putText(frame, text, (20, topMargin),
+                            fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
         return frame
 
-    def displayFPS(self, frame, fps: float):
-        colour = (255, 255, 255)
+    def display_fps(self, frame, fps: float):
         text = "FPS: " + str(np.round(fps, 2))
-        location = (20, 44)
+        location = (20, fontHeight + topMargin + margin)
 
-        cv2.putText(frame, text, location,
-                    font, 0.9, colour, 2)
+        cv2.putText(frame, text, location, color=white,
+                    fontFace=font, fontScale=fontScale, thickness=fontThickness)
 
         return frame
 
     def plot(self, frame, fps, labels, cords):
-        frames = self.plotBoxes(frame=frame, labels=labels, cords=cords)
+        frames = self.plot_boxes(frame=frame, labels=labels, cords=cords)
 
         if fps is not None:
-            frames = self.displayFPS(frames, fps=fps)
+            frames = self.display_fps(frames, fps=fps)
 
         return frames
