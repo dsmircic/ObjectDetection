@@ -10,7 +10,7 @@ class Plotter:
     def __init__(self, classes: dict):
         self.classes = classes
 
-    def classToLabel(self, x):
+    def class_to_label(self, x):
         """
         Returns the label name in a string format from the corresponding numeric label.
 
@@ -22,7 +22,7 @@ class Plotter:
 
         return self.classes[int(x)]
 
-    def plotBoxes(self, frame, labels, cords):
+    def plot_boxes(self, frame, labels, cords):
         """
         Takes a frame and it's results as input and plots bounding boxes and labels onto the frame.
 
@@ -48,14 +48,14 @@ class Plotter:
                 background = (r, g, b)
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
-                cv2.putText(frame, self.classToLabel(
+                cv2.putText(frame, self.class_to_label(
                     labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
                 cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20),
                             cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
 
         return frame
 
-    def displayFPS(self, frame, fps: float):
+    def display_fps(self, frame, fps: float):
         colour = (255, 255, 255)
         text = "FPS: " + str(np.round(fps, 2))
         location = (20, 44)
@@ -66,9 +66,9 @@ class Plotter:
         return frame
 
     def plot(self, frame, fps, labels, cords):
-        frames = self.plotBoxes(frame=frame, labels=labels, cords=cords)
+        frames = self.plot_boxes(frame=frame, labels=labels, cords=cords)
 
         if fps is not None:
-            frames = self.displayFPS(frames, fps=fps)
+            frames = self.display_fps(frames, fps=fps)
 
         return frames

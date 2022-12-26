@@ -13,7 +13,7 @@ class IDetector(abc.ABC):
         self.model = model
         self.classes = classes
 
-    def scoreFrame(self, frame):
+    def score_frame(self, frame):
         """
         Takes a single frame as input, and scores it using the yolov5 model.
 

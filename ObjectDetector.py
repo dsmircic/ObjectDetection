@@ -1,12 +1,14 @@
 import torch
 import numpy as np
 import os
+import cv2
 
+from time import sleep
 from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
-from MediaDetector.MediaDetector import getMediaType
+from MediaDetector.MediaDetector import get_media_type
 from Detectors.VideoDetector import VideoDetector
 from Detectors.ImageDetector import ImageDetector
 
@@ -16,7 +18,7 @@ class ObjectDetector:
     Uses Yolov5 object detection algorithm to detect certain objects and highlights them through OpenCV.
     """
 
-    def __init__(self, path: str, outFile: str):
+    def __init__(self):
         """
         Parameters
         ----------
@@ -27,34 +29,35 @@ class ObjectDetector:
             The path to the file to which the video detection result will be saved.
         """
         self.flags = parse()
-
         if self.flags["source"] is not None:
             self.path = self.flags["source"]
         else:
-            self.path = path
+            print("Provide source file with the '--source' flag")
+            return -1
 
         if self.flags["dest"] is not None:
             self.outFile = self.flags["dest"]
         else:
-            self.outFile = outFile
+            print("Provide out file name with '--dest' flag")
+            return -1
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = self.loadModel()
+        self.model = self.load_model()
         self.classes = self.model.names
 
-        self.setDataLoader()
+        self.set_data_loader()
 
         if not os.path.exists("detections"):
             os.makedirs("detections")
 
         print(f"{self.device} is used for detection.\n")
 
-    def setDataLoader(self):
+    def set_data_loader(self):
         """
         Checks the file type from the path variable and sets the class data loader.
         Data can be loaded from YT videos, images, .mp4 videos ...
         """
-        mediaType = getMediaType(self.path)
+        mediaType = get_media_type(self.path)
 
         if mediaType == "link":
             self.dataLoader = YTLoader()
@@ -75,13 +78,13 @@ class ObjectDetector:
             print("File type not supported!")
             return -1
 
-    def loadDetectionFile(self, path: str):
+    def load_detection_file(self, path: str):
         """
         Loads the data for detection in the correct format.
         """
         return self.dataLoader.loadData(path)
 
-    def loadModel(self): 
+    def load_model(self):
         """
         Loads the yolov5 model from the ultralitycs/yolov5 github repo.
         """
@@ -101,48 +104,37 @@ class ObjectDetector:
         Runs the detection based on the file type (eg. link, video, image) and stores the results in the detections\\ directory.
         """
         self.detector.detect(source=self.path, outFile=self.outFile)
+        self.display_detection_video()
 
-# TODO: fix displayDetectionVideo
-    #     self.displayDetectionVideo()
+# TODO: fix display_detection_video
 
-    # def displayDetectionVideo(self):
-    #     sleep(2)
-    #     print("In display")
-    #     cap = cv2.VideoCapture(self.outFile)
-    #     print(cap.isOpened())
+    def display_detection_video(self):
+        sleep(2)
+        cap = cv2.VideoCapture("detections\\" + self.outFile)
+        print(cap.isOpened())
 
-    #     if not cap.isOpened():
-    #         print(f"Error reading {self.outFile}!")
-    #         return -1
+        if not cap.isOpened():
+            print(f"Error reading {self.outFile}!")
+            return -1
 
-    #     # Read until video is completed
-    #     while(cap.isOpened()):
+        # Read until video is completed
+        while (cap.isOpened()):
 
-    #     # Capture frame-by-frame
-    #         ret, frame = cap.read()
-    #         print(ret, frame)
-    #         if ret == True:
-    #         # Display the resulting frame
-    #             cv2.imshow('Frame', frame)
+            # Capture frame-by-frame
+            ret, frame = cap.read()
+            if ret == True:
+                # Display the resulting frame
+                cv2.imshow('Frame', frame)
 
-    #         # Press Q on keyboard to exit
-    #             if keyboard.read_key() == "q":
-    #                 break
+        # Break the loop
+            else:
+                break
 
-    #     # Break the loop
-    #         else:
-    #             break
-
-    #     # When everything done, release
-    #     # the video capture object
-    #     cap.release()
+        # When everything done, release
+        # the video capture object
+        cap.release()
 
 
 if __name__ == "__main__":
-    detector = ObjectDetector(
-        "https://www.youtube.com/watch?v=NyLF8nHIquM", "video1.avi")
-
-    # detector = ObjectDetector(
-    #     "London.png", "london.png")
-
+    detector = ObjectDetector()
     detector.detect()

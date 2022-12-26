@@ -8,5 +8,5 @@ class ImageLoader(IDataLoader):
     Loads an image from the desired path in the appropriate cv2 format.
     """
 
-    def loadData(self, path: str):
+    def load_data(self, path: str):
         return cv2.imread(path)
