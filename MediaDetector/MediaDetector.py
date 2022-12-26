@@ -13,6 +13,9 @@ def get_media_type(filename: str):
     filename:
         name of the file for which we want to determine the media type.
     """
+    if filename == "0":
+        return "camera"
+
     mimestart = mimetypes.guess_type(filename)[0]
 
     if mimestart != None:
