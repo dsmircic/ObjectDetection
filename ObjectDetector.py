@@ -7,7 +7,7 @@ from ArgParser.ArgParser import parse
 from DataLoaders.YTLoader import YTLoader
 from DataLoaders.ImageLoader import ImageLoader
 from DataLoaders.VideoLoader import VideoLoader
-from MediaDetector.MediaDetector import getMediaType
+from MediaDetector.MediaDetector import get_media_type
 from Detectors.VideoDetector import VideoDetector
 from Detectors.ImageDetector import ImageDetector
 
@@ -40,22 +40,27 @@ class ObjectDetector:
             self.outFile = outFile
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = self.loadModel()
+        self.model = self.load_model()
         self.classes = self.model.names
 
-        self.setDataLoader()
-
-        if not os.path.exists("detections"):
-            os.makedirs("detections")
+        self.set_data_loader()
+        self.create_dirs()
 
         print(f"{self.device} is being used for detection.\n")
 
-    def setDataLoader(self):
+    def create_dirs(self):
+        if not os.path.exists("detections"):
+            os.makedirs("detections")
+
+        if not os.path.exists("buffer"):
+            os.makedirs("buffer")
+
+    def set_data_loader(self):
         """
         Checks the file type from the path variable and sets the class data loader.
         Data can be loaded from YT videos, images, .mp4 videos ...
         """
-        mediaType = getMediaType(self.path)
+        mediaType = get_media_type(self.path)
 
         if mediaType == "link":
             self.dataLoader = YTLoader()
@@ -76,13 +81,13 @@ class ObjectDetector:
             print("File type not supported!")
             return -1
 
-    def loadDetectionFile(self, path: str):
+    def load_detection_file(self, path: str):
         """
         Loads the data for detection in the correct format.
         """
         return self.dataLoader.loadData(path)
 
-    def loadModel(self): 
+    def load_model(self): 
         """
         Loads the yolov5 model from the ultralitycs/yolov5 github repo.
         """
@@ -102,42 +107,6 @@ class ObjectDetector:
         Runs the detection based on the file type (eg. link, video, image) and stores the results in the detections\\ directory.
         """
         self.detector.detect(source=self.path, outFile=self.outFile)
-
-# TODO: fix displayDetectionVideo
-    #     self.displayDetectionVideo()
-
-    # def displayDetectionVideo(self):
-    #     sleep(2)
-    #     print("In display")
-    #     cap = cv2.VideoCapture(self.outFile)
-    #     print(cap.isOpened())
-
-    #     if not cap.isOpened():
-    #         print(f"Error reading {self.outFile}!")
-    #         return -1
-
-    #     # Read until video is completed
-    #     while(cap.isOpened()):
-
-    #     # Capture frame-by-frame
-    #         ret, frame = cap.read()
-    #         print(ret, frame)
-    #         if ret == True:
-    #         # Display the resulting frame
-    #             cv2.imshow('Frame', frame)
-
-    #         # Press Q on keyboard to exit
-    #             if keyboard.read_key() == "q":
-    #                 break
-
-    #     # Break the loop
-    #         else:
-    #             break
-
-    #     # When everything done, release
-    #     # the video capture object
-    #     cap.release()
-
 
 if __name__ == "__main__":
     detector = ObjectDetector(
