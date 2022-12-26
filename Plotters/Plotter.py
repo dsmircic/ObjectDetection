@@ -1,6 +1,14 @@
 import cv2
 import numpy as np
 
+font = cv2.FONT_HERSHEY_DUPLEX
+fontScale = 1
+fontThickness = 2
+size, _ = cv2.getTextSize('Test', font, fontScale=fontScale, thickness=fontThickness)
+fontWidth, fontHeight = size
+margin = 15
+topMargin = 25
+white = (255, 255, 255)
 
 class Plotter:
     """
@@ -35,6 +43,11 @@ class Plotter:
         n = len(labels)
         xShape, yShape = frame.shape[1], frame.shape[0]
 
+        if n == 0:
+            text = "Detected: " + "0"
+            cv2.putText(frame, text, (20, topMargin),
+                    fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
+
         for i in range(n):
             row = cords[i]
             if row[4] >= 0.2:
@@ -49,19 +62,22 @@ class Plotter:
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
                 cv2.putText(frame, self.class_to_label(
-                    labels[i]), (x1, y1), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
-                cv2.putText(frame, "Detected: " + str(len(labels)), (20, 20),
-                            cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
+                    labels[i]), (x1, y1), fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
+
+                detected = str(len(labels)) if len(labels) > 0 else "0" 
+
+                text = "Detected: " + detected
+                cv2.putText(frame, text, (20, topMargin),
+                            fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
         return frame
 
     def display_fps(self, frame, fps: float):
-        colour = (255, 255, 255)
         text = "FPS: " + str(np.round(fps, 2))
-        location = (20, 44)
+        location = (20, fontHeight + topMargin + margin)
 
-        cv2.putText(frame, text, location,
-                    cv2.FONT_HERSHEY_DUPLEX, 0.9, colour, 2)
+        cv2.putText(frame, text, location, color=white,
+                    fontFace=font, fontScale=fontScale, thickness=fontThickness)
 
         return frame
 

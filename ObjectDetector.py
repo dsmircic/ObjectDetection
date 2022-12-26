@@ -111,13 +111,13 @@ class ObjectDetector:
     def display_detection_video(self):
         sleep(2)
         cap = cv2.VideoCapture("detections\\" + self.outFile)
-        print(cap.isOpened())
-
+        
         if not cap.isOpened():
             print(f"Error reading {self.outFile}!")
             return -1
 
         # Read until video is completed
+        print("Press 'q' to stop viewing the video.")
         while (cap.isOpened()):
 
             # Capture frame-by-frame
