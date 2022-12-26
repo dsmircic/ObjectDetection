@@ -126,6 +126,9 @@ class ObjectDetector:
                 # Display the resulting frame
                 cv2.imshow('Frame', frame)
 
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
+
         # Break the loop
             else:
                 break
