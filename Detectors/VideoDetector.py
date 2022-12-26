@@ -34,7 +34,7 @@ class VideoDetector(IDetector):
         keyThread = threading.Thread(target=self.wait_for_key_press)
         keyThread.start()
 
-        player = self.dataSource.loadData(source)
+        player = self.dataSource.load_data(source)
         out = self.create_video_writer(player=player, outFile=outFile)
 
         fps = 0
