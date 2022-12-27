@@ -13,7 +13,7 @@ class IDetector(abc.ABC):
         self.model = model
         self.classes = classes
 
-    def score_frame(self, frame):
+    def score_frame(self, frame) -> dict:
         """
         Takes a single frame as input, and scores it using the yolov5 model.
 
@@ -26,8 +26,12 @@ class IDetector(abc.ABC):
         frame = [frame]
         results = self.model(frame)
 
-        labels, coord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
-        return labels, coord
+        data = dict()
+        data["confidence"] = results.xyxy[0][:, 4].numpy()
+        data["labels"] = results.xyxyn[0][:, -1]
+        data["coords"] = results.xyxyn[0][:, :-1]
+        
+        return data
 
     @abc.abstractmethod
     def detect(self, source: str, outFile: str):

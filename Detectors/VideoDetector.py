@@ -44,7 +44,7 @@ class VideoDetector(IDetector):
             start_time = time()
             ret, frame = player.read()
 
-            labels, cord = super().score_frame(frame=frame)
+            data = super().score_frame(frame=frame)
             plotter = Plotter(self.classes)
 
             if not ret:
@@ -54,7 +54,7 @@ class VideoDetector(IDetector):
             fps = 1/np.round(end_time - start_time, 3)
 
             frame = plotter.plot(frame=frame, fps=fps,
-                                 labels=labels, cords=cord)
+                                 labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
 
             out.write(frame)
             self.write_frame_to_buffer(frame=frame, current_frame=cFrame)
@@ -63,7 +63,5 @@ class VideoDetector(IDetector):
         out.release()
         player.release()
 
-    def write_frame_to_buffer(self, frame, current_frame):
-        # cv2.imwrite("buffer\\buffer" + str(int(current_frame %
-        #             buffer_size)) + ".jpg", frame)
+    def write_frame_to_buffer(self, frame):
         cv2.imwrite("buffer\\buffer.jpg", frame)
