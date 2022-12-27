@@ -38,7 +38,7 @@ class VideoDetector(IDetector):
             startTime = time()
             ret, frame = player.read()
 
-            labels, cord = super().score_frame(frame=frame)
+            data = super().score_frame(frame=frame)
             plotter = Plotter(self.classes)
 
             if not ret:
@@ -48,7 +48,7 @@ class VideoDetector(IDetector):
             fps = 1/np.round(endTime - startTime, 3)
 
             frame = plotter.plot(frame=frame, fps=fps,
-                                 labels=labels, cords=cord)
+                                 labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
 
             out.write(frame)
 

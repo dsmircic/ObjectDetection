@@ -114,8 +114,6 @@ class ObjectDetector:
         self.detector.detect(source=self.path, outFile=self.outFile)
         self.display_detection_video()
 
-# TODO: fix display_detection_video
-
     def display_detection_video(self):
         sleep(2)
         cap = cv2.VideoCapture("detections\\" + self.outFile)

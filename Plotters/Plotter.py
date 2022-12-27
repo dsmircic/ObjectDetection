@@ -2,13 +2,15 @@ import cv2
 import numpy as np
 
 font = cv2.FONT_HERSHEY_DUPLEX
-fontScale = 1
+fontScale = 0.82
 fontThickness = 2
-size, _ = cv2.getTextSize('Test', font, fontScale=fontScale, thickness=fontThickness)
+size, _ = cv2.getTextSize(
+    'Test', font, fontScale=fontScale, thickness=fontThickness)
 fontWidth, fontHeight = size
 margin = 15
 topMargin = 25
 white = (255, 255, 255)
+
 
 class Plotter:
     """
@@ -30,7 +32,7 @@ class Plotter:
 
         return self.classes[int(x)]
 
-    def plot_boxes(self, frame, labels, cords):
+    def plot_boxes(self, frame, labels, cords, confidence):
         """
         Takes a frame and it's results as input and plots bounding boxes and labels onto the frame.
 
@@ -46,7 +48,7 @@ class Plotter:
         if n == 0:
             text = "Detected: " + "0"
             cv2.putText(frame, text, (20, topMargin),
-                    fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
+                        fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
         for i in range(n):
             row = cords[i]
@@ -64,7 +66,10 @@ class Plotter:
                 cv2.putText(frame, self.class_to_label(
                     labels[i]), (x1, y1), fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
-                detected = str(len(labels)) if len(labels) > 0 else "0" 
+                cv2.putText(frame, str(np.round(confidence[i], 3)), (x2 - fontWidth, y1), fontFace=font,
+                            fontScale=fontScale/1.5, color=white, thickness=fontThickness)
+
+                detected = str(len(labels)) if len(labels) > 0 else "0"
 
                 text = "Detected: " + detected
                 cv2.putText(frame, text, (20, topMargin),
@@ -81,8 +86,8 @@ class Plotter:
 
         return frame
 
-    def plot(self, frame, fps, labels, cords):
-        frames = self.plot_boxes(frame=frame, labels=labels, cords=cords)
+    def plot(self, frame, fps, labels, cords, confidence):
+        frames = self.plot_boxes(frame=frame, labels=labels, cords=cords, confidence=confidence)
 
         if fps is not None:
             frames = self.display_fps(frames, fps=fps)

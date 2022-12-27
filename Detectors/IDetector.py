@@ -1,4 +1,7 @@
 import abc
+import numpy as np
+
+import torch
 
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
@@ -13,7 +16,7 @@ class IDetector(abc.ABC):
         self.model = model
         self.classes = classes
 
-    def score_frame(self, frame):
+    def score_frame(self, frame) -> dict:
         """
         Takes a single frame as input, and scores it using the yolov5 model.
 
@@ -22,12 +25,16 @@ class IDetector(abc.ABC):
         frame:
             The frame on which detection will be made.
         """
+        data = dict()
 
         frame = [frame]
         results = self.model(frame)
 
-        labels, coord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
-        return labels, coord
+        data["confidence"] = results.xyxy[0][0:, 4].numpy()
+        data["labels"] = results.xyxyn[0][:, -1]
+        data["coords"] = results.xyxyn[0][:, :-1]
+
+        return data
 
     @abc.abstractmethod
     def detect(self, source: str, outFile: str):

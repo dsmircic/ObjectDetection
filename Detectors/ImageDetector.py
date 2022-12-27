@@ -14,10 +14,10 @@ class ImageDetector(IDetector):
 
     def detect(self, source: str, outFile: str):
         frame = self.dataSource.loadData(source)
-        labels, cord = super().scoreFrame(frame=frame)
+        data = super().scoreFrame(frame=frame)
 
         plotter = Plotter(self.classes)
-        outFrame = plotter.plot(frame, None, labels=labels, cords=cord)
+        outFrame = plotter.plot(frame, None, labels=data["labels"], cords=data["cords"], confidence=data["confidence"])
 
         cv2.imwrite("detections\\" + outFile, outFrame)
         cv2.imshow("Detection", outFrame)
