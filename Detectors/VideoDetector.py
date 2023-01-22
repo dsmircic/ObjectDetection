@@ -41,6 +41,7 @@ class VideoDetector(IDetector):
         fps = 0
         current_frame = 0
         plotter = Plotter(self.classes)
+        
         while key_thread.is_alive():
             start_time = time()
             ret, frame = player.read()
