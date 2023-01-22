@@ -90,7 +90,7 @@ class ObjectDetector:
         """
         Loads the data for detection in the correct format.
         """
-        return self.dataLoader.loadData(path)
+        return self.dataLoader.load_data(path)
 
     def load_model(self):
         """

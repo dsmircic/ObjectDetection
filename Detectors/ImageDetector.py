@@ -13,11 +13,11 @@ class ImageDetector(IDetector):
         super().__init__(dataSource, model, classes)
 
     def detect(self, source: str, outFile: str):
-        frame = self.dataSource.loadData(source)
-        data = super().scoreFrame(frame=frame)
+        frame = self.dataSource.load_data(source)
+        data = super().score_frame(frame=frame)
 
         plotter = Plotter(self.classes)
-        outFrame = plotter.plot(frame, None, labels=data["labels"], cords=data["cords"], confidence=data["confidence"])
+        outFrame = plotter.plot(frame, None, labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
 
         cv2.imwrite("detections\\" + outFile, outFrame)
         cv2.imshow("Detection", outFrame)
