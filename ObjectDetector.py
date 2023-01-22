@@ -122,25 +122,19 @@ class ObjectDetector:
             print(f"Error reading {self.outFile}!")
             return -1
 
-        # Read until video is completed
         print("Press 'q' to stop viewing the video.")
         while (cap.isOpened()):
 
-            # Capture frame-by-frame
             ret, frame = cap.read()
             if ret == True:
-                # Display the resulting frame
+
                 cv2.imshow('Frame', frame)
 
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
-
-        # Break the loop
             else:
                 break
 
-        # When everything done, release
-        # the video capture object
         cap.release()
 
 
