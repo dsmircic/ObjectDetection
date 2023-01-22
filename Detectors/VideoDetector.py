@@ -8,6 +8,8 @@ from time import time
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
 
+skip_frames = 3
+
 
 class VideoDetector(IDetector):
     """
@@ -34,12 +36,16 @@ class VideoDetector(IDetector):
         out = self.create_video_writer(player=player, outFile=outFile)
 
         fps = 0
+        frame_counter = 0
+        plotter = Plotter(self.classes)
         while keyThread.is_alive():
             startTime = time()
             ret, frame = player.read()
 
-            data = super().score_frame(frame=frame)
-            plotter = Plotter(self.classes)
+            if frame_counter % skip_frames == 0:
+                data = super().score_frame(frame=frame)
+
+            frame_counter += 1
 
             if not ret:
                 break
