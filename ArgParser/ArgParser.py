@@ -14,6 +14,8 @@ parser.add_argument("--source", type=str,
                     help="Data on which detection will be made.")
 parser.add_argument("--dest", type=str,
                     help="Name of the file where the detection result will be stored.")
+parser.add_argument("--speed", type=int, default=5,
+                    help="Speed of the detection, 1 is the slowest, 10 is the fastest. Determines how many frames will be skipped before each detection. Default is 5. ")
 
 
 def parse():
@@ -22,6 +24,7 @@ def parse():
     confidence = args.conf
     source = args.source
     dest = args.dest
+    speed = args.speed
 
     intClasses = list()
 
@@ -34,4 +37,5 @@ def parse():
     d["conf"] = confidence
     d["source"] = source
     d["dest"] = dest
+    d["speed"] = speed
     return d

@@ -65,22 +65,22 @@ class ObjectDetector:
         if mediaType == "link":
             self.dataLoader = YTLoader()
             self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
-                self.device), classes=self.classes)
+                self.device), params=self.flags, classes=self.classes)
 
         elif mediaType == "video":
             self.dataLoader = VideoLoader()
             self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
-                self.device), classes=self.classes)
+                self.device), params=self.flags, classes=self.classes)
 
         elif mediaType == "image":
             self.dataLoader = ImageLoader()
             self.detector = ImageDetector(dataSource=self.dataLoader, model=self.model.to(
-                self.device), classes=self.classes)
+                self.device), params=self.flags, classes=self.classes)
 
         elif mediaType == "camera":
             self.dataLoader = CameraLoader
             self.detector = VideoDetector(dataSource=self.dataLoader, model=self.model.to(
-                self.device), classes=self.classes)
+                self.device), params=self.flags, classes=self.classes)
 
         else:
             print("File type not supported!")

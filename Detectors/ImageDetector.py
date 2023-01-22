@@ -9,7 +9,7 @@ class ImageDetector(IDetector):
     """
     Detects objects on images.
     """
-    def __init__(self, dataSource: IDataLoader, model, classes: dict):
+    def __init__(self, dataSource: IDataLoader, model, params: dict, classes: dict):
         super().__init__(dataSource, model, classes)
 
     def detect(self, source: str, outFile: str):

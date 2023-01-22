@@ -3,20 +3,20 @@ import cv2
 import numpy as np
 
 from Detectors.IDetector import IDetector
-from time import time
+from time import time, sleep
 
 from DataLoaders.IDataLoader import IDataLoader
 from Plotters.Plotter import Plotter
-
-skip_frames = 3
 
 
 class VideoDetector(IDetector):
     """
     Detects objects on videos.
     """
-    def __init__(self, dataSource: IDataLoader, model, classes: dict):
+
+    def __init__(self, dataSource: IDataLoader, model, params: dict, classes: dict):
         super().__init__(dataSource, model, classes)
+        self.skip_frames = params["speed"]
 
     def create_video_writer(self, player, outFile: str):
         xShape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -28,34 +28,35 @@ class VideoDetector(IDetector):
     def wait_for_key_press(self):
         input("Press any key to stop the detection...")
 
+    def get_fps(self, start_time, end_time) -> float:
+        return self.skip_frames / np.round(end_time - start_time, 2)
+
     def detect(self, source: str, outFile: str):
-        keyThread = threading.Thread(target=self.wait_for_key_press)
-        keyThread.start()
+        key_thread = threading.Thread(target=self.wait_for_key_press)
+        key_thread.start()
 
         player = self.dataSource.load_data(source)
         out = self.create_video_writer(player=player, outFile=outFile)
 
         fps = 0
-        frame_counter = 0
+        current_frame = 0
         plotter = Plotter(self.classes)
-        while keyThread.is_alive():
-            startTime = time()
+        while key_thread.is_alive():
+            start_time = time()
             ret, frame = player.read()
 
-            if frame_counter % skip_frames == 0:
+            if current_frame % self.skip_frames == 0:
                 data = super().score_frame(frame=frame)
-
-            frame_counter += 1
+                end_time = time()
+                fps = self.get_fps(start_time=start_time, end_time=end_time)
 
             if not ret:
                 break
 
-            endTime = time()
-            fps = 1/np.round(endTime - startTime, 3)
-
             frame = plotter.plot(frame=frame, fps=fps,
                                  labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
 
+            current_frame += 1
             out.write(frame)
 
         out.release()
