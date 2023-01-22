@@ -5,6 +5,7 @@ Include/
 Lib/
 share/
 Scripts/
+buffer/
 
 .vscode
 pyvenv.cfg
