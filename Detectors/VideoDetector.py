@@ -45,23 +45,21 @@ class VideoDetector(IDetector):
         while key_thread.is_alive():
             start_time = time()
             ret, frame = player.read()
+            
+            if not ret:
+                break
 
             if current_frame % self.skip_frames == 0:
                 data = super().score_frame(frame=frame)
                 end_time = time()
                 fps = self.get_fps(start_time=start_time, end_time=end_time)
 
-            if not ret:
-                break
 
             frame = plotter.plot(frame=frame, fps=fps,
                                  labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
 
             current_frame += 1
             out.write(frame)
-            if current_frame > 15:
-                display = cv2.imread("detections\\" + out_file)
-                cv2.imshow("Detection", display)
 
         out.release()
         player.release()
