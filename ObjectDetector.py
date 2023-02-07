@@ -28,7 +28,7 @@ class ObjectDetector:
         path:
             The path from which the object detection file is loaded.
             It can be a yt video, image ...
-        outFile:
+        out_file:
             The path to the file to which the video detection result will be saved.
         """
         self.flags = parse()
@@ -39,7 +39,7 @@ class ObjectDetector:
             return -1
 
         if self.flags["dest"] is not None:
-            self.outFile = self.flags["dest"]
+            self.out_file = self.flags["dest"]
         else:
             print("Provide out file name with '--dest' flag")
             return -1
@@ -111,15 +111,15 @@ class ObjectDetector:
         """
         Runs the detection based on the file type (eg. link, video, image) and stores the results in the detections\\ directory.
         """
-        self.detector.detect(source=self.path, outFile=self.outFile)
+        self.detector.detect(source=self.path, out_file=self.out_file)
         self.display_detection_video()
 
     def display_detection_video(self):
         sleep(2)
-        cap = cv2.VideoCapture("detections\\" + self.outFile)
+        cap = cv2.VideoCapture("detections\\" + self.out_file)
         
         if not cap.isOpened():
-            print(f"Error reading {self.outFile}!")
+            print(f"Error reading {self.out_file}!")
             return -1
 
         print("Press 'q' to stop viewing the video.")
