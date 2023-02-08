@@ -16,7 +16,7 @@ class VideoDetector(IDetector):
 
     def __init__(self, dataSource: IDataLoader, model, params: dict, classes: dict):
         super().__init__(dataSource, model, classes)
-        self.skip_frames = params["speed"]
+        self.params = params
 
     def create_video_writer(self, player, out_file: str):
         xShape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -29,7 +29,7 @@ class VideoDetector(IDetector):
         input("Press any key to stop the detection...")
 
     def get_fps(self, start_time, end_time) -> float:
-        return self.skip_frames / np.round(end_time - start_time, 2)
+        return self.params["speed"] / np.round(end_time - start_time, 2)
 
     def detect(self, source: str, out_file: str):
         key_thread = threading.Thread(target=self.wait_for_key_press)
@@ -49,14 +49,19 @@ class VideoDetector(IDetector):
             if not ret:
                 break
 
-            if current_frame % self.skip_frames == 0:
+            skip_frames = self.params["speed"]
+
+            if current_frame % skip_frames == 0:
                 data = super().score_frame(frame=frame)
                 end_time = time()
                 fps = self.get_fps(start_time=start_time, end_time=end_time)
 
 
+            base = self.params["base"]
+            overlap = self.params["overlap"]
+
             frame = plotter.plot(frame=frame, fps=fps,
-                                 labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
+                                 labels=data["labels"], cords=data["coords"], confidence=data["confidence"], base=base, overlap=overlap)
 
             current_frame += 1
             out.write(frame)
