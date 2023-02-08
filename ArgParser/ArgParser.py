@@ -16,7 +16,7 @@ parser.add_argument("--dest", type=str,
                     help="Name of the file where the detection result will be stored.")
 parser.add_argument("--speed", type=int, default=5,
                     help="Speed of the detection, 1 is the slowest, 10 is the fastest. Determines how many frames will be skipped before each detection. Default is 5. ")
-parser.add_argument("--base", type=int,
+parser.add_argument("--base", type=int, default=-1,
                     help="Object which has to be detected in order to detect other objects which are on top of it.")
 parser.add_argument("--overlap", type=int, default=0.5,
                     help="Area of intersection between the base object and the object on top of it.")

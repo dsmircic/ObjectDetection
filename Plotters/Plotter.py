@@ -67,7 +67,7 @@ class Plotter:
                         fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 
         base_cords_yolo_format = None
-        if base in labels:
+        if base in labels and base != -1:
             cond = tf.equal(labels, base)
             base_index = tf.keras.backend.eval(tf.where(cond))[0]
             base_cords_yolo_format = cords[base_index].numpy()[0]
@@ -80,14 +80,14 @@ class Plotter:
                 x1, y1, x2, y2 = int(row[0] * xShape), int(row[1] * yShape), int(row[2] * xShape), int(row[3] * yShape)
                 
                 obj_cords = None
-                if labels[i] != base:
+                if labels[i] != base and base != -1:
                     obj_cords = Coordinates(x1, y1, x2, y2)
                 
                 intersect = False
                 if obj_cords is not None and base_cords_normal is not None:
                     intersect = self.check_object_cords_in_base_cords(base_cords_normal, obj_cords)
 
-                if labels[i] == base or intersect:
+                if labels[i] == base or intersect or base == -1:
                     r = (int(labels[i] + 1) * 11) % 255
                     g = (int(labels[i] + 1) * 13 - 120) % 255
                     b = (int(labels[i] + 1) * 17 - 25) % 255
@@ -95,6 +95,7 @@ class Plotter:
                     background = (r, g, b)
 
                     cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
+
                     cv2.putText(frame, self.class_to_label(
                         labels[i]), (x1, y1), fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
 

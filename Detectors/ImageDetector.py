@@ -11,13 +11,14 @@ class ImageDetector(IDetector):
     """
     def __init__(self, dataSource: IDataLoader, model, params: dict, classes: dict):
         super().__init__(dataSource, model, classes)
+        self.params = params
 
     def detect(self, source: str, out_file: str):
         frame = self.dataSource.load_data(source)
         data = super().score_frame(frame=frame)
 
         plotter = Plotter(self.classes)
-        out_frame = plotter.plot(frame, None, labels=data["labels"], cords=data["coords"], confidence=data["confidence"])
+        out_frame = plotter.plot(frame, None, labels=data["labels"], cords=data["coords"], confidence=data["confidence"], base=self.params["base"], overlap=self.params["overlap"])
 
         cv2.imwrite("detections\\" + out_file, out_frame)
         cv2.imshow("Detection", out_frame)
