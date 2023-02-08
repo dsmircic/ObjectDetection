@@ -16,6 +16,10 @@ parser.add_argument("--dest", type=str,
                     help="Name of the file where the detection result will be stored.")
 parser.add_argument("--speed", type=int, default=5,
                     help="Speed of the detection, 1 is the slowest, 10 is the fastest. Determines how many frames will be skipped before each detection. Default is 5. ")
+parser.add_argument("--base", type=int,
+                    help="Object which has to be detected in order to detect other objects which are on top of it.")
+parser.add_argument("--overlap", type=int, default=0.5,
+                    help="Area of intersection between the base object and the object on top of it.")
 
 
 def parse():
@@ -25,6 +29,8 @@ def parse():
     source = args.source
     dest = args.dest
     speed = args.speed
+    base = args.base
+    overlap = args.overlap
 
     intClasses = list()
 
@@ -38,4 +44,6 @@ def parse():
     d["source"] = source
     d["dest"] = dest
     d["speed"] = speed
+    d["base"] = base
+    d["overlap"] = overlap
     return d
