@@ -145,10 +145,10 @@ class Plotter:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), background, 2)
 
                     cv2.putText(frame, self.class_to_label(
-                        labels[i]), (x1, y1), fontFace=font, fontScale=fontScale, color=white, thickness=fontThickness)
+                        labels[i]), (x1, y1), fontFace=font, fontScale=fontScale/1.7, color=white, thickness=fontThickness)
 
                     cv2.putText(frame, str(np.round(confidence[i], 3)), (x2 - fontWidth, y1), fontFace=font,
-                                fontScale=fontScale/1.5, color=white, thickness=fontThickness)
+                                fontScale=fontScale/1.7, color=white, thickness=fontThickness)
 
                     detected = str(len(labels)) if len(labels) > 0 else "0"
 
