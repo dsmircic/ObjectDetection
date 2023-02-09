@@ -27,9 +27,7 @@ class ObjectDetector:
         ----------
         path:
             The path from which the object detection file is loaded.
-            It can be a yt video, image ...
-        out_file:
-            The path to the file to which the video detection result will be saved.
+            It can be a yt video, image, camera feed.
         """
         self.flags = parse()
         if self.flags["source"] is not None:
