@@ -81,11 +81,11 @@ class Plotter:
 
         """
         if base in labels and base != -1:
-                    cond = tf.equal(labels, base)
-                    base_index = tf.keras.backend.eval(tf.where(cond))[0]
-                    base_cords_yolo_format = cords[base_index].numpy()[0]
-                    return Coordinates(int(base_cords_yolo_format[0] * x_shape), int(base_cords_yolo_format[1] * y_shape),
-                                                    int(base_cords_yolo_format[2] * x_shape), int(base_cords_yolo_format[3] * y_shape))
+            cond = tf.equal(labels, base)
+            base_index = tf.keras.backend.eval(tf.where(cond))[0]
+            base_cords_yolo_format = cords[base_index].numpy()[0]
+            return Coordinates(int(base_cords_yolo_format[0] * x_shape), int(base_cords_yolo_format[1] * y_shape),
+                                            int(base_cords_yolo_format[2] * x_shape), int(base_cords_yolo_format[3] * y_shape))
 
         return None
 
