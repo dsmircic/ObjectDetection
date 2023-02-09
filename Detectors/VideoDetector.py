@@ -64,6 +64,10 @@ class VideoDetector(IDetector):
                                  labels=data["labels"], cords=data["coords"], confidence=data["confidence"], base=base, overlap=overlap)
 
             current_frame += 1
+
+            cv2.imshow("frame", frame)
+            cv2.waitKey(1)
+
             out.write(frame)
 
         out.release()
