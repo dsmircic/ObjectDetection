@@ -147,7 +147,7 @@ class Plotter:
                     cv2.putText(frame, self.class_to_label(
                         labels[i]), (x1, y1), font_face=font, font_scale=font_scale/1.7, color=white, thickness=font_thickness)
 
-                    cv2.putText(frame, str(np.round(confidence[i], 3)), (x2 - fontWidth, y1), font_face=font,
+                    cv2.putText(frame, str(np.round(confidence[i], 3)), (x2 - font_width, y1), font_face=font,
                                 font_scale=font_scale/1.7, color=white, thickness=font_thickness)
 
                     detected = str(len(labels)) if len(labels) > 0 else "0"
